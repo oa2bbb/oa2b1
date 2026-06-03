@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>九州六日互動旅遊手冊</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#f6f8fb}
+header{background:#2f6fb3;color:#fff;padding:14px;text-align:center}
+.tabs{display:flex;overflow-x:auto;background:#fff;position:sticky;top:0}
+.tabs button{flex:1;min-width:100px;border:none;padding:14px;background:#fff;cursor:pointer;font-weight:bold}
+.tabs button.active{background:#2f6fb3;color:#fff}
+.container{display:flex;flex-wrap:wrap}
+.left{flex:1 1 380px;padding:12px}
+.right{flex:1 1 420px;padding:12px}
+.card{background:#fff;border-radius:14px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:12px}
+table{width:100%;border-collapse:collapse}
+td,th{padding:8px;border-bottom:1px solid #eee;text-align:left}
+.spots{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.spot{background:#fafafa;border-radius:12px;padding:10px;text-align:center}
+.icon{font-size:48px}
+.route{font-size:18px;line-height:2}
+.badge{background:#ffe8a3;padding:4px 8px;border-radius:20px}
+@media(max-width:768px){.spots{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header><h2>九州六日互動旅遊手冊</h2></header>
+
+<div class="tabs">
+<button onclick="showDay(1)" id="tab1">DAY1</button>
+<button onclick="showDay(2)" id="tab2">DAY2</button>
+<button onclick="showDay(3)" id="tab3">DAY3</button>
+<button onclick="showDay(4)" id="tab4">DAY4</button>
+<button onclick="showDay(5)" id="tab5">DAY5</button>
+<button onclick="showDay(6)" id="tab6">DAY6</button>
+</div>
+
+<div class="container">
+<div class="left">
+<div class="card" id="schedule"></div>
+<div class="card" id="booking"></div>
+</div>
+
+<div class="right">
+<div class="card" id="route"></div>
+<div class="card" id="spots"></div>
+</div>
+</div>
+
+<script>
+const data={
+1:{
+title:"7/8 熊本",
+schedule:[["04:00","前往桃園機場"],["10:45","抵達熊本機場"],["午餐","櫻之馬場 城彩苑"],["下午","熊本城"],["晚餐","AMU PLAZA 熊本（自理）"],["住宿","THE BLOSSOM KUMAMOTO"]],
+booking:["城彩苑午餐：自由用餐","AMU PLAZA 晚餐：自理"],
+route:"✈️ 熊本機場 → 🏘️ 城彩苑 → 🏯 熊本城 → 🛍️ AMU PLAZA → 🏨 飯店",
+spots:[["🏘️","城彩苑"],["🏯","熊本城"],["🛍️","AMU PLAZA"],["🏨","THE BLOSSOM"]]
+},
+2:{
+title:"7/9 阿蘇・別府",
+schedule:[["09:00","草千里"],["12:00","草千里景觀餐廳"],["下午","大觀峰"],["下午","九重夢大吊橋"],["19:00","絲帶家（已訂位）"]],
+booking:["絲帶家 レストラン リボン：已訂位 19:00"],
+route:"🌋 草千里 → ⛰️ 大觀峰 → 🌉 九重夢大吊橋 → ♨️ 別府",
+spots:[["🌋","草千里"],["⛰️","大觀峰"],["🌉","九重夢大吊橋"],["♨️","別府"]]
+},
+3:{
+title:"7/10 由布院",
+schedule:[["09:00","由布院老街"],["12:00","七輪炭火焼 啓修庵（已訂位）"],["下午","別府地獄巡禮"],["晚餐","天丼 とよ常本店"]],
+booking:["七輪炭火焼 啓修庵：已訂位","天丼 とよ常本店：現場排隊"],
+route:"🏘️ 由布院 → ♨️ 別府地獄巡禮 → 🍤 天丼",
+spots:[["🏘️","由布院"],["♨️","地獄巡禮"],["🍤","天丼"],["🏨","AMANEK"]]
+},
+4:{
+title:"7/11 門司港・福岡",
+schedule:[["09:00","門司港"],["12:00","三井俱樂部（已訂位）"],["下午","宮地嶽神社"],["晚餐","博多華味鳥"]],
+booking:["三井俱樂部：已訂位、需預先點餐","博多華味鳥：現場候位"],
+route:"⚓ 門司港 → 🍽️ 三井俱樂部 → ⛩️ 宮地嶽神社 → 🌆 博多",
+spots:[["⚓","門司港"],["🍽️","三井俱樂部"],["⛩️","宮地嶽神社"],["🌆","博多"]]
+},
+5:{
+title:"7/12 太宰府",
+schedule:[["09:00","太宰府天滿宮"],["12:00","太宰府 いい乃じ（已訂位）"],["15:00","博多山笠"],["18:00","しゃぶ葉（已訂位）"]],
+booking:["太宰府 いい乃じ：已訂位","しゃぶ葉：已訂位"],
+route:"🙏 太宰府 → 🎐 博多山笠 → 🍲 しゃぶ葉",
+spots:[["🙏","太宰府"],["🎐","博多山笠"],["🍲","しゃぶ葉"],["🏨","TABISAI"]]
+},
+6:{
+title:"7/13 回台",
+schedule:[["12:00前","抵達福岡機場"],["14:15","班機返台"]],
+booking:["無餐廳預訂"],
+route:"🚌 福岡市區 → ✈️ 福岡機場 → 🇹🇼 台灣",
+spots:[["✈️","福岡機場"],["🇹🇼","台灣"]]
+}
+};
+
+function showDay(d){
+document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+document.getElementById('tab'+d).classList.add('active');
+
+let s='<h3>'+data[d].title+'</h3><table><tr><th>時間</th><th>行程</th></tr>';
+data[d].schedule.forEach(r=>s+='<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>');
+s+='</table>';
+document.getElementById('schedule').innerHTML=s;
+
+document.getElementById('booking').innerHTML='<h3>🍴 餐廳預訂資訊</h3><ul>'+data[d].booking.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
+
+document.getElementById('route').innerHTML='<h3>🗺️ 今日路線</h3><div class="route">'+data[d].route+'</div>';
+
+document.getElementById('spots').innerHTML='<h3>✨ 今日景點</h3><div class="spots">'+
+data[d].spots.map(x=>'<div class="spot"><div class="icon">'+x[0]+'</div><b>'+x[1]+'</b></div>').join('')
++'</div>';
+}
+showDay(1);
+</script>
+</body>
+</html>
